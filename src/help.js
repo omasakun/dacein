@@ -107,7 +107,7 @@ export const Help = ({ onClose }) => (
                   {i < args.length - 1 ? ', ' : ''}
                 </>
               ))}{' '}
-              {'}'}})
+              {'}'})
             </li>
           ))}
         </ol>
