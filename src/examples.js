@@ -1,5 +1,5 @@
 export const EXAMPLES = {
-  "animated rectangle": `sketch({
+  'animated rectangle': `sketch({
   size: [600, 600],
 
   initialState: {
@@ -39,7 +39,7 @@ export const EXAMPLES = {
   }
 });`,
 
-  "brownian motion": `const MAX_STEPS = 1000;
+  'brownian motion': `const MAX_STEPS = 1000;
 const RANGE = 10;
 
 const rand = (min, max) => Math.random() * (max - min) + min;
@@ -119,7 +119,7 @@ sketch({
   }
 });`,
 
-  "particle system": `// adapted from https://p5js.org/examples/simulate-particle-system.htmlconst
+  'particle system': `// adapted from https://p5js.org/examples/simulate-particle-system.htmlconst
 
 const vec2 = require("gl-vec2"); // require works
 
@@ -278,5 +278,5 @@ sketch({
     ];
   }
 });
-`
-};
+`,
+}
