@@ -1,29 +1,28 @@
-import JSON from "react-json-view";
-import React, { useEffect, useState } from "react";
-import { get } from "lodash";
+import JSON from 'react-json-view'
+import React, { useEffect, useState } from 'react'
+import { get } from 'lodash'
 
-import { Panel, DIRECTION } from "./panel";
-import { SketchContainer } from "./sketch-container";
-import { Slider } from "./slider";
-import { clamp } from "./math";
-import { optimise } from "./optimise";
-import { useImmer } from "./hooks";
+import { Panel, DIRECTION } from './panel'
+import { SketchContainer } from './sketch-container'
+import { Slider } from './slider'
+import { clamp } from './math'
+import { optimise } from './optimise'
+import { useImmer } from './hooks'
 
-const DEFAULT_IS_PLAYING = true;
+const DEFAULT_IS_PLAYING = true
 
 const RoundButton = ({ onClick, children }) => (
-  <div className="dib">
+  <div className='dib'>
     <button
-      className="mr2 custom-dark bg-gray br-pill bn lh-solid dt dim pointer"
+      className='mr2 custom-dark bg-gray br-pill bn lh-solid dt dim pointer'
       style={{ height: 26, width: 26 }}
-      onClick={onClick}
-    >
-      <div className="dtc v-mid tc" style={{ fontSize: 12, width: 26 }}>
+      onClick={onClick}>
+      <div className='dtc v-mid tc' style={{ fontSize: 12, width: 26 }}>
         {children}
       </div>
     </button>
   </div>
-);
+)
 
 const SketchControls = ({
   isPlaying,
@@ -31,96 +30,78 @@ const SketchControls = ({
   stateHistory,
   setIsPlaying,
   setHistory,
-  onReset
+  onReset,
 }) => (
-  <div className="pa2 flex items-center">
+  <div className='pa2 flex items-center'>
     <RoundButton
       onClick={() => {
         if (!isPlaying) {
-          setHistory(draft => {
-            draft.stateHistory = draft.stateHistory.slice(0, draft.idx + 1);
-          });
+          setHistory((draft) => {
+            draft.stateHistory = draft.stateHistory.slice(0, draft.idx + 1)
+          })
         }
 
-        setIsPlaying(!isPlaying);
-      }}
-    >
-      {isPlaying ? "❚❚" : "▶︎"}
+        setIsPlaying(!isPlaying)
+      }}>
+      {isPlaying ? '❚❚' : '▶︎'}
     </RoundButton>
 
     <RoundButton onClick={onReset}>
       <span style={{ fontSize: 14 }}>◼</span>
     </RoundButton>
 
-    <div className="ml2 w-100">
+    <div className='ml2 w-100'>
       <Slider
         disabled={isPlaying}
-        position={
-          stateHistory.length > 1
-            ? Math.max(0, historyIdx / (stateHistory.length - 1))
-            : 0
-        }
-        onChange={v =>
-          setHistory(draft => {
-            draft.idx = clamp(
-              Math.floor(v * stateHistory.length),
-              0,
-              stateHistory.length - 1
-            );
+        position={stateHistory.length > 1 ? Math.max(0, historyIdx / (stateHistory.length - 1)) : 0}
+        onChange={(v) =>
+          setHistory((draft) => {
+            draft.idx = clamp(Math.floor(v * stateHistory.length), 0, stateHistory.length - 1)
           })
         }
       />
     </div>
   </div>
-);
+)
 
-export const Sketch = ({
-  sketch,
-  constants,
-  code,
-  setConstants,
-  setHighlight
-}) => {
-  const [isPlaying, setIsPlaying] = useState(DEFAULT_IS_PLAYING);
-  const [optimiser, setOptimiser] = useState(false);
+export const Sketch = ({ sketch, constants, code, setConstants, setHighlight }) => {
+  const [isPlaying, setIsPlaying] = useState(DEFAULT_IS_PLAYING)
+  const [optimiser, setOptimiser] = useState(false)
 
-  const [
-    { stateHistory, eventsHistory, idx: historyIdx },
-    setHistory
-  ] = useImmer({
+  const [{ stateHistory, eventsHistory, idx: historyIdx }, setHistory] = useImmer({
     stateHistory: [sketch.initialState || {}],
     eventsHistory: [[]],
-    idx: 0
-  });
+    idx: 0,
+  })
 
-  const [width, height] = get(sketch, "size", [800, 600]);
-  const globals = { width, height };
+  const [width, height] = get(sketch, 'size', [800, 600])
+  const globals = { width, height }
 
   useEffect(() => {
     if (!optimiser) {
-      return;
+      return
     }
 
-    const state = stateHistory[historyIdx];
+    const state = stateHistory[historyIdx]
 
     const newConstants = optimise({
       ...optimiser,
       sketch,
       state,
       globals,
-      constants
-    });
+      constants,
+    })
 
     if (newConstants) {
-      setConstants(newConstants);
+      setConstants(newConstants)
     }
-  }, [optimiser]);
+  }, [optimiser])
 
   return (
-    <div className="w-100 h-100">
+    <div className='w-100 h-100'>
       <Panel direction={DIRECTION.VERTICAL} defaultDivide={0.85}>
-        <div className="flex flex-column h-100">
-          <div className="mb2">
+        <div className='flex flex-column h-100'>
+          <div className='mb2'>
             <SketchControls
               setHistory={setHistory}
               historyIdx={historyIdx}
@@ -128,18 +109,18 @@ export const Sketch = ({
               setIsPlaying={setIsPlaying}
               stateHistory={stateHistory}
               onReset={() => {
-                setHistory(draft => {
-                  draft.stateHistory = [sketch.initialState || {}];
-                  draft.eventsHistory = [[]];
-                  draft.idx = 0;
-                });
+                setHistory((draft) => {
+                  draft.stateHistory = [sketch.initialState || {}]
+                  draft.eventsHistory = [[]]
+                  draft.idx = 0
+                })
 
-                setIsPlaying(false);
+                setIsPlaying(false)
               }}
             />
           </div>
 
-          <div className="flex justify-center items-center relative h-100 overflow-hidden">
+          <div className='flex justify-center items-center relative h-100 overflow-hidden'>
             <SketchContainer
               width={width}
               height={height}
@@ -159,19 +140,19 @@ export const Sketch = ({
           </div>
         </div>
 
-        <div className="pa2 overflow-scroll h-100">
+        <div className='pa2 overflow-scroll h-100'>
           <JSON
             src={stateHistory[historyIdx]}
-            name="state"
+            name='state'
             enableClipboard={false}
             displayDataTypes={false}
             displayObjectSize={false}
             indentWidth={2}
             collapsed={1}
-            theme="grayscale"
+            theme='grayscale'
           />
         </div>
       </Panel>
     </div>
-  );
-};
+  )
+}

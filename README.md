@@ -18,4 +18,3 @@ You can check out lenghty blog post about why, how it was made here: [building d
 1. clone this repo
 2. `npm install`
 3. `npm start`
-
