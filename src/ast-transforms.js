@@ -1,5 +1,5 @@
-import recast from "recast";
-import types from "ast-types";
+import * as recast from "recast";
+import * as types from "ast-types";
 import { get, isNumber } from "lodash";
 
 import { COMMANDS } from "./commands";
